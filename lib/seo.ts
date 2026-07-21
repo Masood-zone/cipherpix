@@ -3,7 +3,10 @@ import type { Metadata } from "next"
 const fallbackUrl = "http://localhost:3000"
 
 function resolveSiteUrl(): URL {
-  const configuredUrl = process.env.NEXT_PUBLIC_SITE_URL?.trim()
+  const vercelUrl = process.env.VERCEL_PROJECT_PRODUCTION_URL?.trim()
+  const configuredUrl =
+    process.env.NEXT_PUBLIC_SITE_URL?.trim() ||
+    (vercelUrl ? `https://${vercelUrl}` : "")
   try {
     return new URL(configuredUrl || fallbackUrl)
   } catch {
@@ -42,7 +45,7 @@ export function createPageMetadata({
   canonicalPath = path,
 }: PageMetadataOptions): Metadata {
   return {
-    title,
+    title: { absolute: `${title} | ${siteConfig.name}` },
     description,
     alternates: { canonical: canonicalPath },
     openGraph: {
