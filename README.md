@@ -1,5 +1,7 @@
 # CipherPix
 
+Repository: [Masood-zone/cipherpix](https://github.com/Masood-zone/cipherpix)
+
 **CipherPix: A Hybrid Image Encryption System Using Caesar Cipher and Rail Fence Algorithms**
 
 CipherPix is a browser-based academic MVP that demonstrates substitution, transposition, binary packaging, recovery settings, and integrity verification using original image-file bytes. Files and recovery keys remain on the user's device.
@@ -39,19 +41,19 @@ pnpm test:e2e
 
 ## Routes
 
-| Route | Purpose |
-| --- | --- |
-| `/` | How CipherPix works and the required academic warnings |
-| `/encrypt` | Image validation, settings, local encryption and package creation |
-| `/encrypt/result` | Temporary `.cpx` and recovery-note downloads |
-| `/decrypt` | Package validation, recovery-note import and local decryption |
-| `/decrypt/result` | Integrity-gated preview and recovered-image download |
-| `/algorithms` | Interactive Caesar, Rail Fence and hybrid demonstrations |
-| `/security` | Security properties, limitations and recommended uses |
-| `/history` | Searchable non-sensitive local activity summaries |
-| `/guide` | User instructions, common errors and privacy FAQ |
-| `/about` | Academic scope and developer information |
-| `/settings` | Local appearance, encryption and privacy preferences |
+| Route             | Purpose                                                           |
+| ----------------- | ----------------------------------------------------------------- |
+| `/`               | How CipherPix works and the required academic warnings            |
+| `/encrypt`        | Image validation, settings, local encryption and package creation |
+| `/encrypt/result` | Temporary `.cpx` and recovery-note downloads                      |
+| `/decrypt`        | Package validation, recovery-note import and local decryption     |
+| `/decrypt/result` | Integrity-gated preview and recovered-image download              |
+| `/algorithms`     | Interactive Caesar, Rail Fence and hybrid demonstrations          |
+| `/security`       | Security properties, limitations and recommended uses             |
+| `/history`        | Searchable non-sensitive local activity summaries                 |
+| `/guide`          | User instructions, common errors and privacy FAQ                  |
+| `/about`          | Academic scope and developer information                          |
+| `/settings`       | Local appearance, encryption and privacy preferences              |
 
 ## Architecture
 
