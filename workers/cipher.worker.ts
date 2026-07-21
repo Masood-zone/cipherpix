@@ -1,6 +1,6 @@
 /// <reference lib="webworker" />
 
-import { checksumMatches, hybridDecrypt, hybridEncrypt, sha256 } from "@/lib/cipherpix/crypto"
+import { caesarDecrypt, caesarEncrypt, checksumMatches, railFenceDecrypt, railFenceEncrypt, sha256 } from "@/lib/cipherpix/crypto"
 import { createCipherPixPackage, parseCipherPixPackage } from "@/lib/cipherpix/package"
 import { CPX_MAGIC, CPX_VERSION, type CipherPixMetadata, type ProcessingStage } from "@/lib/cipherpix/types"
 
@@ -44,8 +44,9 @@ worker.onmessage = async (event: MessageEvent<WorkerRequest>) => {
       const original = new Uint8Array(request.bytes)
       const checksum = await sha256(original)
       stage(request.id, "caesar")
+      const caesarBytes = caesarEncrypt(original, request.key)
       stage(request.id, "rail-fence")
-      const encrypted = hybridEncrypt(original, request.key, request.rails)
+      const encrypted = railFenceEncrypt(caesarBytes, request.rails)
       stage(request.id, "packaging")
       const metadata: CipherPixMetadata = {
         magic: CPX_MAGIC,
@@ -64,7 +65,7 @@ worker.onmessage = async (event: MessageEvent<WorkerRequest>) => {
       }
       const packageBytes = createCipherPixPackage(metadata, encrypted)
       stage(request.id, "verifying")
-      const reconstructed = hybridDecrypt(encrypted, request.key, request.rails)
+      const reconstructed = caesarDecrypt(railFenceDecrypt(encrypted, request.rails), request.key)
       if (!(await checksumMatches(reconstructed, checksum))) throw new Error("Integrity verification failed before download.")
       worker.postMessage(
         { id: request.id, type: "encrypted", packageBytes: packageBytes.buffer, checksum, durationMs: performance.now() - started },
@@ -76,8 +77,9 @@ worker.onmessage = async (event: MessageEvent<WorkerRequest>) => {
     stage(request.id, "reading")
     const parsed = parseCipherPixPackage(new Uint8Array(request.packageBytes))
     stage(request.id, "rail-fence")
+    const transposed = railFenceDecrypt(parsed.encryptedData, request.rails)
     stage(request.id, "caesar")
-    const recovered = hybridDecrypt(parsed.encryptedData, request.key, request.rails)
+    const recovered = caesarDecrypt(transposed, request.key)
     stage(request.id, "verifying")
     if (!(await checksumMatches(recovered, parsed.metadata.originalChecksum))) {
       throw new Error("The recovered data does not match the original image checksum.")
