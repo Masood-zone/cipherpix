@@ -14,7 +14,7 @@ CipherPix is a browser-based academic MVP that demonstrates substitution, transp
 - Shadcn/UI foundations, Base UI, Lucide icons, next-themes
 - Zustand, React Hook Form, Zod
 - Web Workers, Web Crypto, File API, `ArrayBuffer`, `Uint8Array`, Blob URLs
-- Vitest, Testing Library, Playwright
+- Vitest and Testing Library
 
 There is no authentication, database, server upload, Cloudinary integration, analytics, or external file processing.
 
@@ -35,8 +35,6 @@ pnpm typecheck
 pnpm test:run
 pnpm build
 pnpm start
-pnpm exec playwright install chromium
-pnpm test:e2e
 ```
 
 ## Routes
@@ -62,7 +60,7 @@ pnpm test:e2e
 - `lib/cipherpix/` contains pure cryptographic functions, package parsing, validation, recovery-note helpers, downloads and the typed worker client.
 - `workers/` performs CPU-heavy transformations away from the UI thread.
 - `stores/` separates temporary in-memory workflow state from explicitly persisted, non-sensitive settings/history.
-- `tests/` and `e2e/` contain deterministic unit/component and browser workflow coverage.
+- `tests/` contains deterministic unit and component coverage.
 
 ### Encryption flow
 
