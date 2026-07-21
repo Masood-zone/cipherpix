@@ -29,12 +29,20 @@ describe("Caesar transformation", () => {
 })
 
 describe("Rail Fence transformation", () => {
-  it.each([2, 3, 10])("round-trips edge-case lengths with %i rails", (rails) => {
-    for (const length of [0, 1, 2, 9, 10, 101]) {
-      const input = Uint8Array.from({ length }, (_, index) => (index * 37) & 0xff)
-      expect(railFenceDecrypt(railFenceEncrypt(input, rails), rails)).toEqual(input)
+  it.each([2, 3, 10])(
+    "round-trips edge-case lengths with %i rails",
+    (rails) => {
+      for (const length of [0, 1, 2, 9, 10, 101]) {
+        const input = Uint8Array.from(
+          { length },
+          (_, index) => (index * 37) & 0xff
+        )
+        expect(railFenceDecrypt(railFenceEncrypt(input, rails), rails)).toEqual(
+          input
+        )
+      }
     }
-  })
+  )
 
   it("handles more rails than bytes", () => {
     const input = Uint8Array.of(9, 4)
@@ -44,7 +52,10 @@ describe("Rail Fence transformation", () => {
 
 describe("hybrid transform and integrity", () => {
   it("round-trips a deterministic large array", () => {
-    const input = Uint8Array.from({ length: 250_000 }, (_, index) => (index * 19 + 7) & 0xff)
+    const input = Uint8Array.from(
+      { length: 250_000 },
+      (_, index) => (index * 19 + 7) & 0xff
+    )
     expect(hybridDecrypt(hybridEncrypt(input, 255, 10), 255, 10)).toEqual(input)
   })
 
@@ -53,6 +64,8 @@ describe("hybrid transform and integrity", () => {
     const digest = await sha256(input)
     expect(digest).toHaveLength(64)
     await expect(checksumMatches(input, digest)).resolves.toBe(true)
-    await expect(checksumMatches(new TextEncoder().encode("changed"), digest)).resolves.toBe(false)
+    await expect(
+      checksumMatches(new TextEncoder().encode("changed"), digest)
+    ).resolves.toBe(false)
   })
 })

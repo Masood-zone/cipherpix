@@ -7,8 +7,16 @@ import {
   parseCipherPixPackage,
   validateCipherPixPackage,
 } from "@/lib/cipherpix/package"
-import { createRecoveryNote, parseRecoveryNote, serializeRecoveryNote } from "@/lib/cipherpix/recovery"
-import { CPX_MAGIC, CPX_VERSION, type CipherPixMetadata } from "@/lib/cipherpix/types"
+import {
+  createRecoveryNote,
+  parseRecoveryNote,
+  serializeRecoveryNote,
+} from "@/lib/cipherpix/recovery"
+import {
+  CPX_MAGIC,
+  CPX_VERSION,
+  type CipherPixMetadata,
+} from "@/lib/cipherpix/types"
 
 function metadata(length = 4): CipherPixMetadata {
   return {
@@ -33,7 +41,10 @@ describe("CipherPix packages", () => {
     const payload = Uint8Array.of(1, 2, 3, 4)
     const packaged = createCipherPixPackage(metadata(), payload)
     expect(isCipherPixFile(packaged)).toBe(true)
-    expect(parseCipherPixPackage(packaged)).toEqual({ metadata: metadata(), encryptedData: payload })
+    expect(parseCipherPixPackage(packaged)).toEqual({
+      metadata: metadata(),
+      encryptedData: payload,
+    })
   })
 
   it("detects wrong magic, versions, lengths, and truncation", () => {
@@ -56,9 +67,15 @@ describe("file and recovery validation", () => {
 
   it("checks MIME, extension, signature, size, and emptiness", () => {
     expect(validateImageBytes("campus.png", "image/png", png)).toBe("png")
-    expect(() => validateImageBytes("campus.png", "image/png", Uint8Array.of(1))).toThrow("not supported")
-    expect(() => validateImageBytes("x.png", "image/png", new Uint8Array())).toThrow("empty")
-    expect(() => validateImageBytes("x.png", "image/png", png, 2)).toThrow("file-size")
+    expect(() =>
+      validateImageBytes("campus.png", "image/png", Uint8Array.of(1))
+    ).toThrow("not supported")
+    expect(() =>
+      validateImageBytes("x.png", "image/png", new Uint8Array())
+    ).toThrow("empty")
+    expect(() => validateImageBytes("x.png", "image/png", png, 2)).toThrow(
+      "file-size"
+    )
   })
 
   it("sanitizes traversal while preserving Unicode", () => {
@@ -68,7 +85,10 @@ describe("file and recovery validation", () => {
 
   it("round-trips valid notes and rejects invalid notes", () => {
     const note = createRecoveryNote(47, 3, "campus.cpx", true)
-    expect(parseRecoveryNote(serializeRecoveryNote(note))).toMatchObject({ caesarKey: 47, railFenceRails: 3 })
-    expect(() => parseRecoveryNote("{}")) .toThrow()
+    expect(parseRecoveryNote(serializeRecoveryNote(note))).toMatchObject({
+      caesarKey: 47,
+      railFenceRails: 3,
+    })
+    expect(() => parseRecoveryNote("{}")).toThrow()
   })
 })
