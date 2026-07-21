@@ -84,7 +84,7 @@ export default function SettingsPage() {
               </select>
             </label>
             <label>
-              <span className="label">Maximum image size</span>
+              <span className="label">Maximum file size</span>
               <select
                 className="field"
                 value={settings.maxImageSizeMb}

@@ -37,7 +37,7 @@ export default function EncryptionResultPage() {
           <CheckCircle2 className="size-8" />
         </span>
         <h1 className="mt-5 text-4xl font-bold">
-          Your Image Has Been Encrypted
+          Your File Has Been Encrypted
         </h1>
         <p className="mt-3 text-muted-foreground">
           The package was created and an actual reverse transformation matched
@@ -130,13 +130,13 @@ export default function EncryptionResultPage() {
       </div>
       <div className="mx-auto mt-5 max-w-4xl">
         <Notice title="What is a .cpx file?">
-          The `.cpx` file is not a normal image and cannot be opened in a
-          standard image viewer. It contains versioned metadata and transformed
-          binary data, but not the Caesar key or rail value.
+          The `.cpx` file is an encrypted package rather than the original file
+          format. It contains versioned metadata and transformed binary data,
+          but not the Caesar key or rail value.
         </Notice>
         <div className="mt-6 flex flex-wrap gap-3">
           <Link href="/encrypt" className="link-button-outline" onClick={reset}>
-            Encrypt another image
+            Encrypt another file
           </Link>
           <Link href="/decrypt" className="link-button">
             Go to Decrypt

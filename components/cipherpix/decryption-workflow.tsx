@@ -124,7 +124,7 @@ export function DecryptionWorkflow() {
       const message =
         cause instanceof Error
           ? cause.message
-          : "These settings could not recover the original image."
+          : "These settings could not recover the original file."
       setError(message)
       toast.error(message)
       if (settings.storeHistory)
@@ -175,7 +175,8 @@ export function DecryptionWorkflow() {
         if (!parsed.success) {
           for (const issue of parsed.error.issues) {
             const field = issue.path[0]
-            if (field === "key" || field === "rails") form.setError(field, { message: issue.message })
+            if (field === "key" || field === "rails")
+              form.setError(field, { message: issue.message })
           }
           return
         }
@@ -282,7 +283,7 @@ export function DecryptionWorkflow() {
           </p>
         )}
         <Button type="submit" size="lg" className="mt-5 w-full" disabled={busy}>
-          <LockOpen /> {busy ? "Recovering locally…" : "Recover image"}
+          <LockOpen /> {busy ? "Recovering locally…" : "Recover file"}
         </Button>
       </div>
       <div className="lg:col-span-2">

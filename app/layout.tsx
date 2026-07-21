@@ -21,7 +21,9 @@ export const metadata: Metadata = {
   generator: "Next.js",
   category: "education",
   keywords: [
-    "image encryption",
+    "file encryption",
+    "document encryption",
+    "PDF encryption",
     "Caesar Cipher",
     "Rail Fence Cipher",
     "classical cryptography",

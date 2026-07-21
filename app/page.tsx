@@ -21,7 +21,7 @@ import { createPageMetadata } from "@/lib/seo"
 export const metadata: Metadata = createPageMetadata({
   title: "How CipherPix Works",
   description:
-    "Learn how CipherPix transforms original image bytes with Caesar Cipher and Rail Fence algorithms, packages them as .cpx files, and verifies recovery with SHA-256.",
+    "Learn how CipherPix transforms any file's bytes with Caesar Cipher and Rail Fence algorithms, packages them as .cpx files, and verifies recovery with SHA-256.",
   path: "/",
 })
 
@@ -32,11 +32,11 @@ export default function HowItWorksPage() {
       <PageHero
         eyebrow="Start here"
         title="Understand CipherPix Before You Begin"
-        description="CipherPix demonstrates how original image-file bytes can be changed and rearranged using Caesar Cipher and Rail Fence algorithms."
+        description="CipherPix demonstrates how the original bytes of documents, images, PDFs, archives, media, code, and other files can be changed and rearranged using Caesar Cipher and Rail Fence algorithms."
         centered
       >
         <Link href="/encrypt" className="link-button">
-          Encrypt an Image
+          Encrypt a File
         </Link>
         <Link href="/decrypt" className="link-button-outline">
           Decrypt a File
@@ -48,10 +48,10 @@ export default function HowItWorksPage() {
 
       <section className="page-container section-space pt-6">
         <div className="grid gap-5 md:grid-cols-3">
-          <FeatureCard icon={Binary} title="Image bytes">
-            PNG, JPEG, WEBP and BMP files are sequences of byte values from 0 to
-            255. CipherPix transforms the complete original file, not only
-            visible pixels.
+          <FeatureCard icon={Binary} title="File bytes">
+            Every file format is a sequence of byte values from 0 to 255.
+            CipherPix transforms the complete original file, whether it is a
+            document, image, archive, media file, or another format.
           </FeatureCard>
           <FeatureCard icon={KeyRound} title="Two classical operations">
             Caesar changes each byte value. Rail Fence keeps the values but
@@ -60,7 +60,7 @@ export default function HowItWorksPage() {
           <FeatureCard icon={FileArchive} title="The .cpx container">
             A versioned binary package holds non-secret file metadata, the
             SHA-256 checksum and encrypted payload. It cannot be opened as a
-            normal image.
+            normal file in its original application.
           </FeatureCard>
         </div>
       </section>
@@ -69,12 +69,12 @@ export default function HowItWorksPage() {
         <div className="page-container">
           <span className="eyebrow">Encryption journey</span>
           <h2 className="mt-4 mb-7 text-3xl font-bold">
-            From image to CipherPix package
+            From file to CipherPix package
           </h2>
           <Journey
             steps={[
-              "Choose Image",
-              "Read Image Bytes",
+              "Choose File",
+              "Read File Bytes",
               "Apply Caesar Transformation",
               "Apply Rail Fence Rearrangement",
               "Build .cpx Package",
@@ -94,7 +94,7 @@ export default function HowItWorksPage() {
             "Choose .cpx File",
             "Reverse Rail Fence",
             "Reverse Caesar Transformation",
-            "Reconstruct Image",
+            "Reconstruct File",
             "Verify Integrity",
             "Download Original",
           ]}
@@ -111,8 +111,8 @@ export default function HowItWorksPage() {
           fingerprint again. A verified result means the two values actually
           match.
         </FeatureCard>
-        <FeatureCard icon={HardDrive} title="Private by designS">
-          Files, recovered images and keys stay in this browser. Only
+        <FeatureCard icon={HardDrive} title="Private by design">
+          Original files, recovered files and keys stay in this browser. Only
           non-sensitive activity summaries and preferences may be stored
           locally. No file is sent to a server.
         </FeatureCard>
@@ -121,7 +121,7 @@ export default function HowItWorksPage() {
             The Caesar key changes byte values and the Rail Fence value changes
             positions. Neither value is stored inside the `.cpx` package.
             Download the separate recovery note and keep it safe—anyone with
-            both files can recover the image.
+            both files can recover the original file.
           </Notice>
         </div>
         {/* <div className="md:col-span-2">

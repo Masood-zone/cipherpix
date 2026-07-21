@@ -5,7 +5,7 @@ import { createPageMetadata } from "@/lib/seo"
 export const metadata: Metadata = createPageMetadata({
   title: "Temporary Decryption Result",
   description:
-    "Preview and download a locally reconstructed image after SHA-256 verification.",
+    "Download a locally reconstructed file after SHA-256 verification.",
   path: "/decrypt/result",
   canonicalPath: "/decrypt",
   index: false,

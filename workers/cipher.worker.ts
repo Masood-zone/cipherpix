@@ -1,8 +1,23 @@
 /// <reference lib="webworker" />
 
-import { caesarDecrypt, caesarEncrypt, checksumMatches, railFenceDecrypt, railFenceEncrypt, sha256 } from "@/lib/cipherpix/crypto"
-import { createCipherPixPackage, parseCipherPixPackage } from "@/lib/cipherpix/package"
-import { CPX_MAGIC, CPX_VERSION, type CipherPixMetadata, type ProcessingStage } from "@/lib/cipherpix/types"
+import {
+  caesarDecrypt,
+  caesarEncrypt,
+  checksumMatches,
+  railFenceDecrypt,
+  railFenceEncrypt,
+  sha256,
+} from "@/lib/cipherpix/crypto"
+import {
+  createCipherPixPackage,
+  parseCipherPixPackage,
+} from "@/lib/cipherpix/package"
+import {
+  CPX_MAGIC,
+  CPX_VERSION,
+  type CipherPixMetadata,
+  type ProcessingStage,
+} from "@/lib/cipherpix/types"
 
 type EncryptRequest = {
   id: string
@@ -14,8 +29,8 @@ type EncryptRequest = {
     name: string
     mimeType: string
     extension: string
-    width: number
-    height: number
+    width?: number
+    height?: number
   }
 }
 
@@ -56,8 +71,9 @@ worker.onmessage = async (event: MessageEvent<WorkerRequest>) => {
         originalMimeType: request.file.mimeType,
         originalExtension: request.file.extension,
         originalSize: original.length,
-        width: request.file.width,
-        height: request.file.height,
+        ...(request.file.width && request.file.height
+          ? { width: request.file.width, height: request.file.height }
+          : {}),
         checksumAlgorithm: "SHA-256",
         originalChecksum: checksum,
         encryptedAt: new Date().toISOString(),
@@ -65,11 +81,21 @@ worker.onmessage = async (event: MessageEvent<WorkerRequest>) => {
       }
       const packageBytes = createCipherPixPackage(metadata, encrypted)
       stage(request.id, "verifying")
-      const reconstructed = caesarDecrypt(railFenceDecrypt(encrypted, request.rails), request.key)
-      if (!(await checksumMatches(reconstructed, checksum))) throw new Error("Integrity verification failed before download.")
+      const reconstructed = caesarDecrypt(
+        railFenceDecrypt(encrypted, request.rails),
+        request.key
+      )
+      if (!(await checksumMatches(reconstructed, checksum)))
+        throw new Error("Integrity verification failed before download.")
       worker.postMessage(
-        { id: request.id, type: "encrypted", packageBytes: packageBytes.buffer, checksum, durationMs: performance.now() - started },
-        [packageBytes.buffer],
+        {
+          id: request.id,
+          type: "encrypted",
+          packageBytes: packageBytes.buffer,
+          checksum,
+          durationMs: performance.now() - started,
+        },
+        [packageBytes.buffer]
       )
       return
     }
@@ -82,14 +108,29 @@ worker.onmessage = async (event: MessageEvent<WorkerRequest>) => {
     const recovered = caesarDecrypt(transposed, request.key)
     stage(request.id, "verifying")
     if (!(await checksumMatches(recovered, parsed.metadata.originalChecksum))) {
-      throw new Error("The recovered data does not match the original image checksum.")
+      throw new Error(
+        "The recovered data does not match the original file checksum."
+      )
     }
     worker.postMessage(
-      { id: request.id, type: "decrypted", recoveredBytes: recovered.buffer, metadata: parsed.metadata, durationMs: performance.now() - started },
-      [recovered.buffer],
+      {
+        id: request.id,
+        type: "decrypted",
+        recoveredBytes: recovered.buffer,
+        metadata: parsed.metadata,
+        durationMs: performance.now() - started,
+      },
+      [recovered.buffer]
     )
   } catch (error) {
-    worker.postMessage({ id: request.id, type: "error", message: error instanceof Error ? error.message : "The browser could not process this operation." })
+    worker.postMessage({
+      id: request.id,
+      type: "error",
+      message:
+        error instanceof Error
+          ? error.message
+          : "The browser could not process this operation.",
+    })
   }
 }
 

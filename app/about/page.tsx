@@ -13,7 +13,7 @@ import { createPageMetadata } from "@/lib/seo"
 export const metadata: Metadata = createPageMetadata({
   title: "About the CipherPix Academic Project",
   description:
-    "Learn about the aim, objectives, scope, technology, developer, and source repository behind the CipherPix classical image-encryption academic MVP.",
+    "Learn about the aim, objectives, scope, technology, developer, and source repository behind the CipherPix classical file-encryption academic MVP.",
   path: "/about",
 })
 
@@ -27,13 +27,13 @@ export default function AboutPage() {
       />
       <section className="page-container grid gap-5 pb-12 md:grid-cols-2">
         <FeatureCard icon={GraduationCap} title="Aim">
-          Develop an accessible browser application that demonstrates image-file
+          Develop an accessible browser application that demonstrates file
           encryption and decryption using a hybrid of two classical algorithms
           while preserving exact byte integrity.
         </FeatureCard>
         <FeatureCard icon={ListChecks} title="Objectives">
           Teach byte substitution and transposition, package encrypted data,
-          separate recovery settings, reconstruct the original image, and verify
+          separate recovery settings, reconstruct the original file, and verify
           the result with SHA-256.
         </FeatureCard>
         <FeatureCard icon={Code2} title="Included technology">
@@ -62,7 +62,7 @@ export default function AboutPage() {
       </section>
       <section className="page-container grid gap-5 pb-12 md:grid-cols-2">
         <Notice title="Included scope">
-          Local image encryption/decryption, educational explanations, binary
+          Local file encryption/decryption, educational explanations, binary
           packaging, recovery notes, integrity verification, settings, and
           non-sensitive history.
         </Notice>

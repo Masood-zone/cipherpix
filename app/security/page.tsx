@@ -29,8 +29,8 @@ export default function SecurityPage() {
       />
       <section className="page-container grid gap-5 pb-12 md:grid-cols-2 lg:grid-cols-3">
         <FeatureCard icon={MonitorCheck} title="Local processing">
-          Original images, encrypted packages, recovery notes and reconstructed
-          images are processed in your browser.
+          Original files, encrypted packages, recovery notes and reconstructed
+          files are processed in your browser.
         </FeatureCard>
         <FeatureCard icon={Braces} title="Reversible transformations">
           CipherPix combines byte substitution and positional transposition in a

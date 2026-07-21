@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 "use client"
 
-import { CheckCircle2, Download, ImagePlus } from "lucide-react"
+import { CheckCircle2, Download, FileCheck2, FilePlus2 } from "lucide-react"
 import Link from "next/link"
 
 import { LostResult, Notice } from "@/components/cipherpix/ui"
@@ -12,24 +12,39 @@ import { useDecryptionStore } from "@/stores/workflow-store"
 export default function DecryptionResultPage() {
   const { result, reset } = useDecryptionStore()
   if (!result) return <LostResult operation="decryption" />
+  const hasImagePreview = Boolean(
+    result.metadata.originalMimeType.startsWith("image/") &&
+    result.metadata.width &&
+    result.metadata.height
+  )
   return (
     <section className="page-container section-space">
       <span className="eyebrow">
         <CheckCircle2 className="size-4" /> Process complete
       </span>
-      <h1 className="page-title">Your Image Has Been Recovered</h1>
+      <h1 className="page-title">Your File Has Been Recovered</h1>
       <p className="page-lead">
         The reconstructed bytes match the original SHA-256 checksum and are
         ready for download.
       </p>
       <div className="mt-8 grid gap-6 lg:grid-cols-[1.5fr_1fr]">
         <div className="surface-card p-3">
-          <div className="relative overflow-hidden rounded-xl bg-muted">
-            <img
-              src={result.previewUrl}
-              alt={`Recovered ${result.metadata.originalFileName}`}
-              className="max-h-[650px] min-h-72 w-full object-contain"
-            />
+          <div className="relative grid min-h-72 place-items-center overflow-hidden rounded-xl bg-muted">
+            {hasImagePreview ? (
+              <img
+                src={result.previewUrl}
+                alt={`Recovered ${result.metadata.originalFileName}`}
+                className="max-h-[650px] min-h-72 w-full object-contain"
+              />
+            ) : (
+              <div className="px-6 text-center text-muted-foreground">
+                <FileCheck2 className="mx-auto size-24" aria-hidden="true" />
+                <p className="mt-4 font-semibold break-all">
+                  {result.metadata.originalFileName}
+                </p>
+                <p className="mt-1 text-sm">Ready to download</p>
+              </div>
+            )}
             <span className="absolute top-3 left-3 rounded-full bg-white px-3 py-2 text-sm font-semibold text-green-800 shadow">
               <CheckCircle2 className="mr-1 inline size-4" /> Integrity Verified
             </span>
@@ -44,21 +59,21 @@ export default function DecryptionResultPage() {
                 downloadBlob(result.blob, result.metadata.originalFileName)
               }
             >
-              <Download className="size-4" /> Download Recovered Image
+              <Download className="size-4" /> Download Recovered File
             </button>
             <Link
               className="link-button-outline mt-3 w-full"
               href="/decrypt"
               onClick={reset}
             >
-              <ImagePlus className="size-4" /> Decrypt another file
+              <FilePlus2 className="size-4" /> Decrypt another file
             </Link>
             <Link
               className="link-button-outline mt-3 w-full"
               href="/encrypt"
               onClick={reset}
             >
-              Encrypt this image again
+              Encrypt this file again
             </Link>
           </div>
           <div className="surface-card">

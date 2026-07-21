@@ -7,15 +7,15 @@ import { createPageMetadata } from "@/lib/seo"
 export const metadata: Metadata = createPageMetadata({
   title: "CipherPix User Guide",
   description:
-    "Step-by-step instructions for encrypting images, saving recovery settings, importing recovery notes, decrypting .cpx packages, and resolving common errors.",
+    "Step-by-step instructions for encrypting files, saving recovery settings, importing recovery notes, decrypting .cpx packages, and resolving common errors.",
   path: "/guide",
 })
 
 const sections = [
   [
     FileUp,
-    "1. Choose an image",
-    "Open Encrypt and select a PNG, JPG, JPEG, WEBP or BMP file up to your configured size limit. CipherPix checks its type, signature and browser decodability.",
+    "1. Choose a file",
+    "Open Encrypt and select any non-empty file up to your configured size limit. This includes DOCX, DOC, TXT, PDF, images, archives, audio, video, code, and other formats.",
   ],
   [
     KeyRound,
@@ -52,11 +52,11 @@ export default function GuidePage() {
       <section className="page-container space-y-4 pb-12">
         <h2 className="text-3xl font-bold">Common errors</h2>
         <details className="surface-card">
-          <summary className="font-semibold">My image is rejected</summary>
+          <summary className="font-semibold">My file is rejected</summary>
           <p className="mt-3 text-muted-foreground">
-            Check that the file is a supported, non-empty image below the
-            configured limit. Renaming an unsupported file does not change its
-            actual format.
+            Check that the file is non-empty and below the configured size
+            limit. CipherPix accepts any file format, even when the browser does
+            not report a MIME type.
           </p>
         </details>
         <details className="surface-card">
@@ -75,7 +75,7 @@ export default function GuidePage() {
           </summary>
           <p className="mt-3 text-muted-foreground">
             Binary results live only in memory. Repeat the operation; this
-            behavior prevents image data and keys from being persisted locally.
+            behavior prevents file data and keys from being persisted locally.
           </p>
         </details>
       </section>

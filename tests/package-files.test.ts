@@ -1,6 +1,11 @@
 import { describe, expect, it } from "vitest"
 
-import { sanitizeFileName, validateImageBytes } from "@/lib/cipherpix/files"
+import {
+  normalizedMimeType,
+  sanitizeFileName,
+  validateFileBytes,
+  validateImageBytes,
+} from "@/lib/cipherpix/files"
 import {
   createCipherPixPackage,
   isCipherPixFile,
@@ -47,6 +52,23 @@ describe("CipherPix packages", () => {
     })
   })
 
+  it("preserves non-image metadata without requiring dimensions", () => {
+    const payload = Uint8Array.of(80, 75, 3, 4)
+    const documentMetadata: CipherPixMetadata = {
+      ...metadata(payload.length),
+      originalFileName: "research.docx",
+      originalMimeType:
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      originalExtension: "docx",
+    }
+    delete documentMetadata.width
+    delete documentMetadata.height
+
+    expect(
+      parseCipherPixPackage(createCipherPixPackage(documentMetadata, payload))
+    ).toMatchObject({ metadata: documentMetadata, encryptedData: payload })
+  })
+
   it("detects wrong magic, versions, lengths, and truncation", () => {
     const valid = createCipherPixPackage(metadata(), Uint8Array.of(1, 2, 3, 4))
     const wrongMagic = valid.slice()
@@ -75,6 +97,22 @@ describe("file and recovery validation", () => {
     ).toThrow("empty")
     expect(() => validateImageBytes("x.png", "image/png", png, 2)).toThrow(
       "file-size"
+    )
+  })
+
+  it("accepts arbitrary non-empty file bytes within the size limit", () => {
+    expect(() =>
+      validateFileBytes("report.docx", Uint8Array.of(80, 75, 3, 4))
+    ).not.toThrow()
+    expect(() => validateFileBytes("notes.txt", new Uint8Array())).toThrow(
+      "empty"
+    )
+    expect(() =>
+      validateFileBytes("archive.zip", Uint8Array.of(1, 2, 3), 2)
+    ).toThrow("file-size")
+    expect(normalizedMimeType("")).toBe("application/octet-stream")
+    expect(normalizedMimeType("Application/PDF; charset=binary")).toBe(
+      "application/pdf"
     )
   })
 

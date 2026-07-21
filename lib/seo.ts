@@ -20,7 +20,7 @@ export const siteConfig = {
     "CipherPix: A Hybrid Image Encryption System Using Caesar Cipher and Rail Fence Algorithms",
   tagline: "Secure Every Pixel.",
   description:
-    "A local, browser-based academic platform for learning image encryption with Caesar Cipher, Rail Fence transposition, SHA-256 verification, and versioned CipherPix packages.",
+    "A local, browser-based academic platform for learning file encryption with Caesar Cipher, Rail Fence transposition, SHA-256 verification, and versioned CipherPix packages.",
   url: resolveSiteUrl(),
   repository: "https://github.com/Masood-zone/cipherpix",
   author: {

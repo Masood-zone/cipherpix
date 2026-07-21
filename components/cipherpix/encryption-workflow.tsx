@@ -6,7 +6,7 @@ import {
   Eye,
   EyeOff,
   FileCheck2,
-  ImageIcon,
+  FileText,
   RefreshCw,
   Trash2,
 } from "lucide-react"
@@ -26,7 +26,7 @@ import {
 import {
   baseName,
   formatBytes,
-  inspectImageFile,
+  inspectFile,
   sanitizeFileName,
 } from "@/lib/cipherpix/files"
 import { CPX_MIME_TYPE } from "@/lib/cipherpix/types"
@@ -44,16 +44,18 @@ const schema = z.object({
 })
 type FormValues = z.infer<typeof schema>
 
-interface SelectedImage {
+interface SelectedFile {
   file: File
   bytes: Uint8Array
-  width: number
-  height: number
-  previewUrl: string
+  mimeType: string
+  extension: string
+  width?: number
+  height?: number
+  previewUrl?: string
 }
 
 const stages = [
-  ["reading", "Reading image data"],
+  ["reading", "Reading file data"],
   ["hashing", "Calculating integrity checksum"],
   ["caesar", "Applying Caesar transformation"],
   ["rail-fence", "Applying Rail Fence rearrangement"],
@@ -67,12 +69,14 @@ export function EncryptionWorkflow() {
   const settings = useSettingsStore()
   const addHistory = useHistoryStore((state) => state.add)
   const { stage, setStage, setResult, reset } = useEncryptionStore()
-  const [selected, setSelected] = React.useState<SelectedImage | null>(null)
+  const [selected, setSelected] = React.useState<SelectedFile | null>(null)
   const [error, setError] = React.useState<string | null>(null)
   const [busy, setBusy] = React.useState(false)
   const [showKey, setShowKey] = React.useState(false)
   const [confirming, setConfirming] = React.useState(false)
-  const [pendingValues, setPendingValues] = React.useState<FormValues | null>(null)
+  const [pendingValues, setPendingValues] = React.useState<FormValues | null>(
+    null
+  )
   const form = useForm<FormValues>({
     defaultValues: {
       key: 47,
@@ -89,7 +93,7 @@ export function EncryptionWorkflow() {
   }, [form])
   React.useEffect(
     () => () => {
-      if (selected) URL.revokeObjectURL(selected.previewUrl)
+      if (selected?.previewUrl) URL.revokeObjectURL(selected.previewUrl)
     },
     [selected]
   )
@@ -97,15 +101,17 @@ export function EncryptionWorkflow() {
   async function selectFile(file: File): Promise<void> {
     setError(null)
     try {
-      const inspected = await inspectImageFile(
+      const inspected = await inspectFile(
         file,
         settings.maxImageSizeMb * 1024 * 1024
       )
-      if (selected) URL.revokeObjectURL(selected.previewUrl)
-      const previewUrl = URL.createObjectURL(file)
+      if (selected?.previewUrl) URL.revokeObjectURL(selected.previewUrl)
+      const previewUrl = inspected.width ? URL.createObjectURL(file) : undefined
       setSelected({
         file,
         bytes: inspected.bytes,
+        mimeType: inspected.mimeType,
+        extension: inspected.extension,
         width: inspected.width,
         height: inspected.height,
         previewUrl,
@@ -121,7 +127,7 @@ export function EncryptionWorkflow() {
   }
 
   function recoveryText(values = form.getValues()): string {
-    const outputName = `${sanitizeFileName(values.outputName || (selected ? baseName(selected.file.name) : "cipherpix-image"))}.cpx`
+    const outputName = `${sanitizeFileName(values.outputName || (selected ? baseName(selected.file.name) : "cipherpix-file"))}.cpx`
     return serializeRecoveryNote(
       createRecoveryNote(
         values.key,
@@ -144,7 +150,7 @@ export function EncryptionWorkflow() {
     const url = URL.createObjectURL(blob)
     const anchor = document.createElement("a")
     anchor.href = url
-    anchor.download = `${sanitizeFileName(form.getValues("outputName") || "cipherpix-image")}.cpx-key.json`
+    anchor.download = `${sanitizeFileName(form.getValues("outputName") || "cipherpix-file")}.cpx-key.json`
     anchor.click()
     setTimeout(() => URL.revokeObjectURL(url), 1000)
     toast.success("Recovery note downloaded")
@@ -168,8 +174,8 @@ export function EncryptionWorkflow() {
         values.rails,
         {
           name: selected.file.name,
-          mimeType: selected.file.type,
-          extension: selected.file.name.split(".").pop()?.toLowerCase() ?? "",
+          mimeType: selected.mimeType,
+          extension: selected.extension,
           width: selected.width,
           height: selected.height,
         },
@@ -261,12 +267,12 @@ export function EncryptionWorkflow() {
     return (
       <div className="space-y-5">
         <FileDropzone
-          accept=".png,.jpg,.jpeg,.webp,.bmp,image/png,image/jpeg,image/webp,image/bmp"
-          title="Choose an image to encrypt"
-          description={`Drag and drop a PNG, JPG, JPEG, WEBP or BMP up to ${settings.maxImageSizeMb} MB.`}
+          accept="*/*"
+          title="Choose a file to encrypt"
+          description={`Drag and drop any file up to ${settings.maxImageSizeMb} MB, including documents, images, audio, video, archives, and code.`}
           onFile={(file) => void selectFile(file)}
         />
-        <Notice title="Your image stays private">
+        <Notice title="Your file stays private">
           CipherPix reads and transforms the file locally. No upload or server
           storage occurs.
         </Notice>
@@ -281,27 +287,36 @@ export function EncryptionWorkflow() {
   return (
     <form onSubmit={submit} className="space-y-6">
       <div className="surface-card grid gap-6 md:grid-cols-[260px_1fr]">
-        <img
-          src={selected.previewUrl}
-          alt={`Preview of ${selected.file.name}`}
-          className="h-56 w-full rounded-xl bg-muted object-contain"
-        />
+        {selected.previewUrl ? (
+          <img
+            src={selected.previewUrl}
+            alt={`Preview of ${selected.file.name}`}
+            className="h-56 w-full rounded-xl bg-muted object-contain"
+          />
+        ) : (
+          <div className="grid h-56 place-items-center rounded-xl bg-muted text-muted-foreground">
+            <FileText className="size-20" aria-hidden="true" />
+          </div>
+        )}
         <div>
           <div className="flex items-start justify-between gap-4">
             <div>
               <p className="text-xl font-bold">{selected.file.name}</p>
               <p className="mt-1 text-sm text-muted-foreground">
-                {selected.file.type} · {formatBytes(selected.file.size)} ·{" "}
-                {selected.width} × {selected.height}px
+                {selected.mimeType} · {formatBytes(selected.file.size)}
+                {selected.width && selected.height
+                  ? ` · ${selected.width} × ${selected.height}px`
+                  : ""}
               </p>
             </div>
             <Button
               type="button"
               variant="ghost"
               size="icon"
-              aria-label="Remove image"
+              aria-label="Remove file"
               onClick={() => {
-                URL.revokeObjectURL(selected.previewUrl)
+                if (selected.previewUrl)
+                  URL.revokeObjectURL(selected.previewUrl)
                 setSelected(null)
               }}
             >
@@ -309,8 +324,9 @@ export function EncryptionWorkflow() {
             </Button>
           </div>
           <Notice title="Original file bytes">
-            The preview confirms the file is a decodable image. Encryption
-            operates on every original file byte.
+            Encryption operates on every original file byte. Image previews are
+            shown when the browser can decode them; other formats remain fully
+            supported without a preview.
           </Notice>
         </div>
       </div>
@@ -363,7 +379,11 @@ export function EncryptionWorkflow() {
             <label className="label" htmlFor="rails">
               Rail Fence rails
             </label>
-            <select id="rails" className="field" {...form.register("rails", { valueAsNumber: true })}>
+            <select
+              id="rails"
+              className="field"
+              {...form.register("rails", { valueAsNumber: true })}
+            >
               {Array.from({ length: 9 }, (_, index) => index + 2).map(
                 (value) => (
                   <option key={value}>{value}</option>
@@ -437,7 +457,7 @@ export function EncryptionWorkflow() {
         className="w-full sm:w-auto"
         disabled={busy}
       >
-        <ImageIcon /> {busy ? "Encrypting locally…" : "Encrypt image"}
+        <FileText /> {busy ? "Encrypting locally…" : "Encrypt file"}
       </Button>
       {confirming && (
         <div className="fixed inset-0 z-50 grid place-items-center bg-black/50 p-4">
@@ -452,7 +472,7 @@ export function EncryptionWorkflow() {
             </h2>
             <p className="mt-3 text-muted-foreground">
               The key and rail value are not stored in the `.cpx` file. Losing
-              them means the image cannot be recovered.
+              them means the file cannot be recovered.
             </p>
             <div className="mt-6 grid gap-3 sm:grid-cols-2">
               <Button
@@ -470,7 +490,9 @@ export function EncryptionWorkflow() {
               <Button
                 type="button"
                 variant="outline"
-                onClick={() => { if (pendingValues) void begin(pendingValues) }}
+                onClick={() => {
+                  if (pendingValues) void begin(pendingValues)
+                }}
               >
                 I Have Saved Them
               </Button>

@@ -25,7 +25,7 @@ const structuredData = {
   },
   codeRepository: siteConfig.repository,
   featureList: [
-    "Local browser image encryption",
+    "Local browser file encryption",
     "Caesar byte transformation",
     "Rail Fence transposition",
     "SHA-256 integrity verification",

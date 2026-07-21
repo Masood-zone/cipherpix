@@ -4,7 +4,7 @@ Repository: [Masood-zone/cipherpix](https://github.com/Masood-zone/cipherpix)
 
 **CipherPix: A Hybrid Image Encryption System Using Caesar Cipher and Rail Fence Algorithms**
 
-CipherPix is a browser-based academic MVP that demonstrates substitution, transposition, binary packaging, recovery settings, and integrity verification using original image-file bytes. Files and recovery keys remain on the user's device.
+CipherPix is a browser-based academic MVP that demonstrates substitution, transposition, binary packaging, recovery settings, and integrity verification using original file bytes. Files and recovery keys remain on the user's device.
 
 > CipherPix uses classical ciphers for education. It does not provide modern production-grade encryption and must not be used for sensitive information.
 
@@ -47,19 +47,19 @@ pnpm start
 
 ## Routes
 
-| Route             | Purpose                                                           |
-| ----------------- | ----------------------------------------------------------------- |
-| `/`               | How CipherPix works and the required academic warnings            |
-| `/encrypt`        | Image validation, settings, local encryption and package creation |
-| `/encrypt/result` | Temporary `.cpx` and recovery-note downloads                      |
-| `/decrypt`        | Package validation, recovery-note import and local decryption     |
-| `/decrypt/result` | Integrity-gated preview and recovered-image download              |
-| `/algorithms`     | Interactive Caesar, Rail Fence and hybrid demonstrations          |
-| `/security`       | Security properties, limitations and recommended uses             |
-| `/history`        | Searchable non-sensitive local activity summaries                 |
-| `/guide`          | User instructions, common errors and privacy FAQ                  |
-| `/about`          | Academic scope and developer information                          |
-| `/settings`       | Local appearance, encryption and privacy preferences              |
+| Route             | Purpose                                                            |
+| ----------------- | ------------------------------------------------------------------ |
+| `/`               | How CipherPix works and the required academic warnings             |
+| `/encrypt`        | File validation, settings, local encryption and package creation   |
+| `/encrypt/result` | Temporary `.cpx` and recovery-note downloads                       |
+| `/decrypt`        | Package validation, recovery-note import and local decryption      |
+| `/decrypt/result` | Integrity-gated recovered-file download and optional image preview |
+| `/algorithms`     | Interactive Caesar, Rail Fence and hybrid demonstrations           |
+| `/security`       | Security properties, limitations and recommended uses              |
+| `/history`        | Searchable non-sensitive local activity summaries                  |
+| `/guide`          | User instructions, common errors and privacy FAQ                   |
+| `/about`          | Academic scope and developer information                           |
+| `/settings`       | Local appearance, encryption and privacy preferences               |
 
 ## Architecture
 
@@ -72,7 +72,7 @@ pnpm start
 
 ### Encryption flow
 
-1. Validate extension, MIME type, binary signature, size and browser decodability.
+1. Validate that the file is non-empty and within the configured size limit; record its extension and MIME type when available.
 2. Read the original file into a `Uint8Array`.
 3. Calculate SHA-256 over those exact bytes.
 4. Apply `(byte + key) mod 256` to every byte.
@@ -119,11 +119,11 @@ Recovery settings are downloaded separately as `.cpx-key.json`:
 }
 ```
 
-Descriptive filename/date fields may be omitted through the metadata preference. The key and rails remain required. Anyone with both the package and note can recover the image.
+Descriptive filename/date fields may be omitted through the metadata preference. The key and rails remain required. Anyone with both the package and note can recover the original file.
 
 ## Privacy and local storage
 
-Binary workflow data, images, previews, packages, checksums, keys, rail values, and recovery notes are never written to localStorage. Zustand keeps them in memory only, and Blob URLs are revoked on reset. Refreshing a result route intentionally shows a lost-result explanation.
+Binary workflow data, original files, previews, packages, checksums, keys, rail values, and recovery notes are never written to localStorage. Zustand keeps them in memory only, and Blob URLs are revoked on reset. Refreshing a result route intentionally shows a lost-result explanation.
 
 localStorage may contain only:
 
@@ -134,6 +134,6 @@ History can be disabled or cleared. No third-party tracking is included.
 
 ## Browser support and limitations
 
-CipherPix targets current evergreen browsers with Web Crypto, Web Workers, File APIs, `createImageBitmap`, Blob URLs, Canvas/image decoding and localStorage. Supported inputs are PNG, JPG/JPEG, WEBP and BMP, with a configurable maximum of 20 MB.
+CipherPix targets current evergreen browsers with Web Crypto, Web Workers, File APIs, `createImageBitmap`, Blob URLs and localStorage. It accepts any non-empty file format, including DOCX, DOC, TXT, PDF, images, archives, audio, video and code, with a configurable maximum of 20 MB. Decodable images also receive an in-browser preview and dimension metadata.
 
 Classical Caesar/Rail Fence encryption has a tiny key space, predictable structure and no resistance comparable to authenticated modern encryption. SHA-256 verifies exact reconstruction; it does not make the classical cipher secure. Results are session-memory-only, cancellation is not offered, and very old browsers are unsupported.
