@@ -2,8 +2,14 @@ import type { Metadata } from "next"
 import { Download, FileUp, KeyRound, ShieldCheck } from "lucide-react"
 
 import { FeatureCard, Notice, PageHero } from "@/components/cipherpix/ui"
+import { createPageMetadata } from "@/lib/seo"
 
-export const metadata: Metadata = { title: "User Guide" }
+export const metadata: Metadata = createPageMetadata({
+  title: "CipherPix User Guide",
+  description:
+    "Step-by-step instructions for encrypting images, saving recovery settings, importing recovery notes, decrypting .cpx packages, and resolving common errors.",
+  path: "/guide",
+})
 
 const sections = [
   [

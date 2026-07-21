@@ -29,6 +29,14 @@ pnpm dev
 
 Open `http://localhost:3000`.
 
+For production SEO, set the public deployment origin before building so canonical URLs, Open Graph URLs, `robots.txt`, and `sitemap.xml` use the deployed domain:
+
+```bash
+NEXT_PUBLIC_SITE_URL=https://your-domain.example
+```
+
+Optional search-console verification values are supported through `GOOGLE_SITE_VERIFICATION` and `BING_SITE_VERIFICATION`.
+
 ```bash
 pnpm lint
 pnpm typecheck

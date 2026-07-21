@@ -9,8 +9,14 @@ import {
 import type { Metadata } from "next"
 
 import { FeatureCard, PageHero } from "@/components/cipherpix/ui"
+import { createPageMetadata } from "@/lib/seo"
 
-export const metadata: Metadata = { title: "Security & Limitations" }
+export const metadata: Metadata = createPageMetadata({
+  title: "Security & Limitations",
+  description:
+    "Understand CipherPix local processing, SHA-256 integrity checks, classical cipher weaknesses, and why this academic tool is not a replacement for AES.",
+  path: "/security",
+})
 
 export default function SecurityPage() {
   return (

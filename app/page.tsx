@@ -1,4 +1,5 @@
 import Link from "next/link"
+import type { Metadata } from "next"
 import {
   Binary,
   FileArchive,
@@ -14,10 +15,20 @@ import {
   Notice,
   PageHero,
 } from "@/components/cipherpix/ui"
+import { StructuredData } from "@/components/seo/structured-data"
+import { createPageMetadata } from "@/lib/seo"
+
+export const metadata: Metadata = createPageMetadata({
+  title: "How CipherPix Works",
+  description:
+    "Learn how CipherPix transforms original image bytes with Caesar Cipher and Rail Fence algorithms, packages them as .cpx files, and verifies recovery with SHA-256.",
+  path: "/",
+})
 
 export default function HowItWorksPage() {
   return (
     <>
+      <StructuredData />
       <PageHero
         eyebrow="Start here"
         title="Understand CipherPix Before You Begin"

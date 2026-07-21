@@ -1,9 +1,21 @@
 import type { Metadata } from "next"
-import { Code2, ExternalLink, GraduationCap, ListChecks, UserRound } from "lucide-react"
+import {
+  Code2,
+  ExternalLink,
+  GraduationCap,
+  ListChecks,
+  UserRound,
+} from "lucide-react"
 
 import { FeatureCard, Notice, PageHero } from "@/components/cipherpix/ui"
+import { createPageMetadata } from "@/lib/seo"
 
-export const metadata: Metadata = { title: "About" }
+export const metadata: Metadata = createPageMetadata({
+  title: "About the CipherPix Academic Project",
+  description:
+    "Learn about the aim, objectives, scope, technology, developer, and source repository behind the CipherPix classical image-encryption academic MVP.",
+  path: "/about",
+})
 
 export default function AboutPage() {
   return (
