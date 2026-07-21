@@ -52,6 +52,7 @@ export async function inspectImageFile(file: File, maxBytes: number): Promise<{
 export function sanitizeFileName(value: string, fallback = "cipherpix-image"): string {
   const safe = value
     .normalize("NFC")
+    .replace(/^(\.\.[/\\])+/, "")
     .replace(/[\u0000-\u001f\u007f<>:"/\\|?*]/g, "-")
     .replace(/\.\.+/g, ".")
     .replace(/^\.+|[. ]+$/g, "")
