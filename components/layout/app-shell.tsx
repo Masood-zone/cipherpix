@@ -152,8 +152,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <div className="flex flex-wrap gap-4">
             <Link href="/about">About</Link>
             <Link href="/guide">Documentation</Link>
-            <Link href="/security">Security & limitations</Link>
-            <a href="https://github.com/Masood-zone/cipherpix" target="_blank" rel="noreferrer">
+            <Link href="/security">Security</Link>
+            <a
+              href="https://github.com/Masood-zone/cipherpix"
+              target="_blank"
+              rel="noreferrer"
+            >
               GitHub
             </a>
           </div>
